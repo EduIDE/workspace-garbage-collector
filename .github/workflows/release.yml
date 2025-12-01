@@ -8,6 +8,10 @@ on:
       - "helm/**"
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
