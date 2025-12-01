@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  theia-workspace-garbage-collector:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-12-01T19:16:17.168837007Z"
+    description: A Helm chart to deploy the Workspace Garbage Collector for Theia
+    digest: 8e07a5fc84af0553bebc0f1a9997b2b34c5e3a7c3b1994c1ffd0563b7b28849d
+    name: theia-workspace-garbage-collector
+    type: application
+    urls:
+    - https://github.com/ls1intum/theia-workspace-garbage-collector/releases/download/theia-workspace-garbage-collector-0.1.0/theia-workspace-garbage-collector-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-12-01T19:16:17.168848699Z"
