@@ -6,11 +6,12 @@ on:
       - main
     paths:
       - "helm/**"
+      - ".github/workflows/release.yml"
   workflow_dispatch:
 
 permissions:
   contents: write
-  pages: write
+  packages: write
 
 jobs:
   release:
@@ -21,17 +22,29 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
       - name: Install Helm
         uses: azure/setup-helm@v4
 
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.6.0
+      - name: Set registry owner
+        run: echo "REGISTRY_OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Extract chart version
+        id: chart
+        run: |
+          VERSION=$(grep '^version:' helm/Chart.yaml | awk '{print $2}')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Package and push to OCI
+        run: |
+          helm package ./helm
+          helm push theia-workspace-garbage-collector-${{ steps.chart.outputs.version }}.tgz oci://ghcr.io/${{ env.REGISTRY_OWNER }}/charts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          charts_dir: .
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          tag_name: theia-workspace-garbage-collector-${{ steps.chart.outputs.version }}
+          name: theia-workspace-garbage-collector ${{ steps.chart.outputs.version }}
+          generate_release_notes: true
