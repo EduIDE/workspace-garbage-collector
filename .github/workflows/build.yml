@@ -10,6 +10,6 @@ jobs:
       docker-file: Dockerfile
       image-name: ghcr.io/eduide/garbage-collector
       docker-context: .
-      tags: "2024-12-02"
+      tags: "latest"
       network: "host"
     secrets: inherit
