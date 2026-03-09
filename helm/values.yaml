@@ -1,6 +1,6 @@
 replicaCount: 1
 image:
-  repository: ghcr.io/eduide/theia/garbage-collector
+  repository: ghcr.io/eduide/garbage-collector
   tag: latest
   pullPolicy: Always
 
