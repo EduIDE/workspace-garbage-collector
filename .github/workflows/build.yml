@@ -5,11 +5,11 @@ on:
 
 jobs:
   build-and-push:
-    uses: ls1intum/.github/.github/workflows/build-and-push-docker-image.yml@feat/docker-run-network
+    uses: ls1intum/.github/.github/workflows/build-and-push-docker-image.yml@main
     with:
       docker-file: Dockerfile
-      image-name: ghcr.io/ls1intum/theia/garbage-collector
+      image-name: ghcr.io/eduide/garbage-collector
       docker-context: .
-      tags: "2024-12-02"
+      tags: "latest,${{ github.sha }}"
       network: "host"
     secrets: inherit
