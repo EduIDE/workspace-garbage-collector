@@ -26,3 +26,9 @@ jobs:
 
       - name: Vet
         run: go vet ./...
+
+  # Only meaningful on a pull request - the action diffs the PR's dependencies
+  # against the base branch, so there is nothing for it to look at on a push.
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    uses: EduIDE/.github/.github/workflows/dependency-review.yml@v1
