@@ -1,15 +1,45 @@
+name: Build and Push Docker Image
+
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
+  release:
+    types:
+      - published
+      - prereleased
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Optional image tag override"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build-and-push:
-    uses: ls1intum/.github/.github/workflows/build-and-push-docker-image.yml@main
+    permissions:
+      contents: read
+      packages: write
+    uses: EduIDE/.github/.github/workflows/build-and-push-docker-image.yml@v1
     with:
       docker-file: Dockerfile
-      image-name: ghcr.io/eduide/garbage-collector
+      # The chart in helm/values.yaml pulls ghcr.io/eduide/garbage-collector.
+      image-name: eduide/garbage-collector
       docker-context: .
-      tags: "latest,${{ github.sha }}"
-      network: "host"
+      # Not passed on a release: the shared workflow turns a vX.Y.Z release tag
+      # into X.Y.Z, and an override would skip that.
+      image-tag: ${{ github.event_name == 'workflow_dispatch' && inputs.image_tag || '' }}
+      # Small Go build; reclaiming disk space is not worth the time.
+      free-disk-space: false
     secrets: inherit
