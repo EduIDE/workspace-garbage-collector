@@ -10,7 +10,6 @@ on:
   release:
     types:
       - published
-      - prereleased
   workflow_dispatch:
     inputs:
       image_tag:
