@@ -10,3 +10,7 @@ serviceAccount:
 env:
   WORKSPACE_TTL: "1209600s"
   CHECK_INTERVAL: "1800s"
+
+global:
+  # Pin the pod to a node pool, e.g. {aet.cit.tum.de/pool: pve}. Set by the parent eduide chart.
+  nodeSelector: {}
