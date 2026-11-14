@@ -12,6 +12,6 @@ The following values can be configured via environment variables:
 ## Releasing
 Releases are manual: a release pull request (version in `helm/Chart.yaml`, both `version` and `appVersion`, plus the `CHANGELOG.md` section), then
 `gh workflow run release.yml -R EduIDE/workspace-garbage-collector -f version=X.Y.Z` after it merges.
-The run tags `theia-workspace-garbage-collector-X.Y.Z`, creates the GitHub Release from the CHANGELOG, pushes the image `ghcr.io/eduide/garbage-collector:X.Y.Z` and the chart `oci://ghcr.io/eduide/charts/theia-workspace-garbage-collector:X.Y.Z`, and verifies both.
+The run drafts the GitHub Release from the CHANGELOG, pushes the image `ghcr.io/eduide/garbage-collector:X.Y.Z` and the chart `oci://ghcr.io/eduide/charts/theia-workspace-garbage-collector:X.Y.Z`, verifies both and then publishes the release, which creates the tag `theia-workspace-garbage-collector-X.Y.Z`.
 Nothing releases on push to `main`. The chart's `image.tag` defaults to its `appVersion`, so a chart version pins its own image.
 See `.claude/skills/release/SKILL.md`.
