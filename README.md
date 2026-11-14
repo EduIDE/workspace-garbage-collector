@@ -9,6 +9,8 @@ The following values can be configured via environment variables:
 
 ## Deployment
 `helm upgrade --install theia-workspace-garbage-collector ./helm -f ./helm/values.yaml`
+
+The image tag defaults to the chart's `appVersion`. Until that version is released, set `--set image.tag=<tag>` to an existing image (for example a `pr-<N>` build).
 ## Releasing
 Releases are manual: a release pull request (version in `helm/Chart.yaml`, both `version` and `appVersion`, plus the `CHANGELOG.md` section), then
 `gh workflow run release.yml -R EduIDE/workspace-garbage-collector -f version=X.Y.Z` after it merges.
