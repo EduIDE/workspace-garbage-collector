@@ -8,4 +8,6 @@ The following values can be configured via environment variables:
 - `CHECK_INTERVAL`: The interval at which the operator checks for unused workspaces. Default is 1 hour (1800s).
 
 ## Deployment
+Set `global.nodeSelector` in the Helm values to pin the pod to a node pool. The parent `eduide` chart sets it for you.
+
 `helm upgrade --install theia-workspace-garbage-collector ./helm -f ./helm/values.yaml`
