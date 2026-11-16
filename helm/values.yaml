@@ -1,7 +1,8 @@
 replicaCount: 1
 image:
   repository: ghcr.io/eduide/garbage-collector
-  tag: latest
+  # Empty means the chart appVersion, i.e. the image of the same release.
+  tag: ""
   pullPolicy: Always
 
 serviceAccount:
