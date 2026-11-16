@@ -13,7 +13,7 @@ A release is two steps with a human in between:
    `version`), which validates, builds, tags, creates the GitHub Release from
    the CHANGELOG section and publishes.
 
-Nothing releases on push to `main`. Tags look like `theia-workspace-garbage-collector-X.Y.Z`;
+Nothing releases on push to `main`. Tags look like `vX.Y.Z` (until 0.2.0: `theia-workspace-garbage-collector-X.Y.Z`);
 images, charts and vsix files carry `X.Y.Z` without the prefix.
 
 ## Reference for this repository
@@ -31,7 +31,7 @@ What a release publishes:
 |---|---|---|
 | Image | `ghcr.io/eduide/garbage-collector:X.Y.Z` (amd64 and arm64) | `docker buildx imagetools inspect ghcr.io/eduide/garbage-collector:X.Y.Z` |
 | Chart | `oci://ghcr.io/eduide/charts/theia-workspace-garbage-collector:X.Y.Z` | `helm show chart oci://ghcr.io/eduide/charts/theia-workspace-garbage-collector --version X.Y.Z` |
-| GitHub Release | `theia-workspace-garbage-collector-X.Y.Z` with the CHANGELOG section | `gh release view theia-workspace-garbage-collector-X.Y.Z -R EduIDE/workspace-garbage-collector` |
+| GitHub Release | `vX.Y.Z` with the CHANGELOG section | `gh release view vX.Y.Z -R EduIDE/workspace-garbage-collector` |
 
 EduIDE dependencies this repository pins:
 
@@ -227,7 +227,7 @@ Check every row of "What a release publishes" with the command in its Check
 column (the `verify` job already ran them), and that the release is public:
 
 ```bash
-gh release view theia-workspace-garbage-collector-X.Y.Z -R EduIDE/workspace-garbage-collector --json url,isDraft,isPrerelease,assets --jq '{url, isDraft, isPrerelease, assets: [.assets[].name]}'
+gh release view vX.Y.Z -R EduIDE/workspace-garbage-collector --json url,isDraft,isPrerelease,assets --jq '{url, isDraft, isPrerelease, assets: [.assets[].name]}'
 ```
 
 Report to the user: the release link, the artifacts with their check result,
