@@ -27,6 +27,9 @@ jobs:
       - name: Vet
         run: go vet ./...
 
+      - name: Test
+        run: go test ./...
+
   # Only meaningful on a pull request - the action diffs the PR's dependencies
   # against the base branch, so there is nothing for it to look at on a push.
   dependency-review:
