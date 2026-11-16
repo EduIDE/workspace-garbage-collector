@@ -6,13 +6,16 @@ It is a Kubernetes operator that cleans unused workspaces periodically.
 The following values can be configured via environment variables:
 - `WORKSPACE_TTL`: The time to live of a workspace. Default is 2 weeks (1209600s).
 - `CHECK_INTERVAL`: The interval at which the operator checks for unused workspaces. Default is 30 minutes.
+- `K8S_NAMESPACE`: The namespace in which workspaces are collected. Default is `theia-prod`.
+
+Durations accept Go syntax (`30m`, `336h`). A value without a unit is read as seconds.
 
 ## Deployment
 Set `global.nodeSelector` in the Helm values to pin the pod to a node pool. The parent `eduide` chart sets it for you.
 
 `helm upgrade --install theia-workspace-garbage-collector ./helm -f ./helm/values.yaml`
 
-The image tag defaults to the chart's `appVersion`. Until that version is released, set `--set image.tag=<tag>` to an existing image (for example a `pr-<N>` build).
+The image tag defaults to the chart's `appVersion`. To test an unreleased build, set `--set image.tag=<tag>` to an existing image (for example a `pr-<N>` build).
 ## Releasing
 Releases are manual: a release pull request (version in `helm/Chart.yaml`, both `version` and `appVersion`, plus the `CHANGELOG.md` section), then
 `gh workflow run release.yml -R EduIDE/workspace-garbage-collector -f version=X.Y.Z` after it merges.

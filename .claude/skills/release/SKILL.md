@@ -41,7 +41,7 @@ Who pins this repository (tell the user after the release):
 
 | Repository | Pinned in |
 |---|---|
-| EduIDE-Helm | `charts/eduide/Chart.yaml` `dependencies[name=theia-workspace-garbage-collector].version`, and `charts/eduide/values.yaml` `theia-workspace-garbage-collector.image.tag` (clear it once the chart version pins its own image) |
+| EduIDE-Helm | `charts/eduide/Chart.yaml` `dependencies[name=theia-workspace-garbage-collector].version` (`charts/eduide/values.yaml` sets no `image.tag`: the image follows the chart's `appVersion`) |
 
 ## 1. Find the last release and what is unreleased
 
