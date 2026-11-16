@@ -17,9 +17,9 @@ import (
 )
 
 const (
-	defaultTTL           = int64(14 * 24 * time.Hour) // 14 days in hours
-	defaultCheckInterval = int64(30 * time.Minute)    // 30 minutes in minutes
-	defaultNamespace     = "theia-prod"               // Default namespace
+	defaultTTL           = 14 * 24 * time.Hour
+	defaultCheckInterval = 30 * time.Minute
+	defaultNamespace     = "theia-prod"
 )
 
 /*
@@ -34,12 +34,38 @@ func getEnv(key, defaultValue string) string {
 	return defaultValue
 }
 
+// getDuration reads a duration from the environment. Values without a unit
+// ("1209600") count as seconds, matching the README.
+func getDuration(key string, defaultValue time.Duration) (time.Duration, error) {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		return defaultValue, nil
+	}
+	d, err := time.ParseDuration(value)
+	if err != nil {
+		seconds, convErr := strconv.ParseInt(value, 10, 64)
+		if convErr != nil {
+			return 0, fmt.Errorf("invalid %s %q: use a duration like 30m or a number of seconds", key, value)
+		}
+		d = time.Duration(seconds) * time.Second
+	}
+	if d <= 0 {
+		return 0, fmt.Errorf("invalid %s %q: must be positive", key, value)
+	}
+	return d, nil
+}
+
 func main() {
 	var config *rest.Config
 	var err error
 
 	namespace := getEnv("K8S_NAMESPACE", defaultNamespace)
-	checkInterval, err := time.ParseDuration(getEnv("CHECK_INTERVAL", strconv.FormatInt(defaultCheckInterval, 10)))
+	checkInterval, err := getDuration("CHECK_INTERVAL", defaultCheckInterval)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	maxDuration, err := getDuration("WORKSPACE_TTL", defaultTTL)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -64,7 +90,7 @@ func main() {
 	// Print configuration
 	fmt.Printf("- Namespace: %s\n", namespace)
 	fmt.Printf("- Check interval: %s\n", checkInterval)
-	fmt.Printf("- Workspace TTL: %s\n", getEnv("WORKSPACE_TTL", strconv.FormatInt(defaultTTL, 10)))
+	fmt.Printf("- Workspace TTL: %s\n", maxDuration)
 
 	ticker := time.NewTicker(checkInterval)
 	defer ticker.Stop()
@@ -77,7 +103,7 @@ func main() {
 			return
 		case <-ticker.C:
 			fmt.Println("Running garbage collection...")
-			err := garbageCollectWorkspaces(clientSet, namespace)
+			err := garbageCollectWorkspaces(clientSet, namespace, maxDuration)
 			if err != nil {
 				fmt.Printf("Error during garbage collection: %v\n", err)
 			} else {
@@ -88,12 +114,7 @@ func main() {
 	}
 }
 
-func garbageCollectWorkspaces(clientSet *clientV1Beta5.V1Beta5Client, namespace string) error {
-	maxDuration, err := time.ParseDuration(getEnv("WORKSPACE_TTL", strconv.FormatInt(int64(14*24*time.Hour), 10)))
-	if err != nil {
-		return err
-	}
-
+func garbageCollectWorkspaces(clientSet *clientV1Beta5.V1Beta5Client, namespace string, maxDuration time.Duration) error {
 	workspaces, err := clientSet.Workspaces(namespace).List(metav1.ListOptions{})
 	if err != nil {
 		return err
